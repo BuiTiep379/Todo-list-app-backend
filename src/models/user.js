@@ -49,4 +49,13 @@ userSchema.pre('save', async function (next) {
     }
 });
 
+userSchema.methods.comparePassword = async function (password) {
+    const isMatch = await bcrypt.compare(password, this.password);
+    return isMatch;
+};
+userSchema.virtual('fullName').get(function () {
+    return this.firstName + ' ' + this.lastName;
+});
+
+
 module.exports = mongoose.model('User', userSchema);
