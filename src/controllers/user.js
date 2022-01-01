@@ -1,7 +1,7 @@
-const User = require('../models/user');
 const { StatusCodes } = require('http-status-codes');
 const { BadRequestError, NotFoundError } = require('../errors');
 const { createJWT } = require('../middlewares/user-middleware');
+const User = require('../models/user');
 const signin = async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {

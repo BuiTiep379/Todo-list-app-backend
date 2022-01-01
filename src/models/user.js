@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
+    googleId: {
+        type: String,
+    },
+    displayName: {
+        type: String,
+    },
     firstName: {
         type: String,
         required: true,
@@ -14,12 +20,10 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
         minLength: 6
     },
     email: {
         type: String,
-        required: true,
         unique: true,
         trim: true,
     },
@@ -57,5 +61,4 @@ userSchema.virtual('fullName').get(function () {
     return this.firstName + ' ' + this.lastName;
 });
 
-
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.models.User || mongoose.model('User', userSchema);

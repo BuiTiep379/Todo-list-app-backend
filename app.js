@@ -1,9 +1,12 @@
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
-// const passport = require('passport');
-// const session = require('express-session');
+const passport = require('passport');
+const path = require('path');
+const MongoStore = require('connect-mongo');
+const session = require('express-session');
+const { engine } = require('express-handlebars');
 require('express-async-errors');
-require('dotenv').config();
 
 const app = express();
 
@@ -11,8 +14,9 @@ const app = express();
 const notFoundMiddleware = require('./src/middlewares/not-found');
 const errorHandlerMiddleware = require('./src/middlewares/error-handler');
 // passport middleware
-// const { passportFacebook } = require('./src/middlewares/passport');
+const { passportGoogle } = require('./src/middlewares/passport');
 
+passportGoogle(passport);
 // connect mongodb
 const connectDB = require('./src/db/connect');
 
@@ -24,25 +28,35 @@ app.use(morgan('dev'));
 
 
 //middleware
+app.use(express.static(path.join(__dirname, './src/public')))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// passport
-// app.use(passport.initialize());
-// app.use(passport.session());
+/// express-handlebar engine 
+app.engine('.hbs', engine({
+    extname: '.hbs',
+    defaultLayout: 'main',
+}));
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, './src/views'));
 
-// //session
-// app.use(session({
-//     resave: false,
-//     saveUninitialized: true,
-//     secret: 'SECRET'
-// }));
+// Sessions
+app.use(
+    session({
+        secret: 'keyboard cat',
+        resave: false,
+        saveUninitialized: false,
+        store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL }),
+    })
+)
+/// passport middleware 
+app.use(passport.initialize());
+app.use(passport.session());
 // // router
 
 // passportFacebook(passport);
-
-app.use('/api/v1/auth', authRouter);
-
+app.use('/auth', authRouter);
+app.use('/', require('./src/routes/index'));
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 // port
