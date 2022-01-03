@@ -3,7 +3,7 @@ const { UnauthenticatedError } = require('../errors');
 // save the token
 
 const createJWT = async (user) => {
-    const token = await jwt.sign({ _id: user._id, email: user.email, fullName: user.fullName }, process.env.JWT_SECRET, {
+    const token = await jwt.sign({ _id: user._id, email: user.lc.email, fullName: user.lc.fullName }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRATION
     });
 

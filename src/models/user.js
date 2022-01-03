@@ -2,34 +2,62 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-    googleId: {
-        type: String,
+    fb: {
+        id: {
+            type: String,
+        },
+        displayName: {
+            type: String,
+        },
+        firstName: {
+            type: String,
+            trim: true,
+        },
+        lastName: {
+            type: String,
+            trim: true,
+        },
+        email: {
+            type: String,
+        },
     },
-    displayName: {
-        type: String,
+    gg: {
+        id: {
+            type: String,
+        },
+        displayName: {
+            type: String,
+        },
+        firstName: {
+            type: String,
+            trim: true,
+        },
+        lastName: {
+            type: String,
+            trim: true,
+        },
+        email: {
+            type: String,
+        },
     },
-    firstName: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    lastName: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    password: {
-        type: String,
-        minLength: 6
-    },
-    email: {
-        type: String,
-        unique: true,
-        trim: true,
-    },
-    image: {
-        type: String,
+    lc: {
+        firstName: {
+            type: String,
+            trim: true,
+        },
+        lastName: {
+            type: String,
+            trim: true,
+        },
+        password: {
+            type: String,
+            minLength: 6
+        },
+        email: {
+            type: String,
+        },
     }
+
 }, { timestamps: true });
 
 
@@ -43,10 +71,10 @@ userSchema.pre('save', async function (next) {
     */
     //c2
     // only hash the password if it has been modified (or is new)
-    if (!this.isModified('password')) return next();
+    if (!this.isModified('lc.password')) return next();
     try {
         const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
+        this.lc.password = await bcrypt.hash(this.lc.password, salt);
         return next();
     } catch (err) {
         return next(err);
@@ -54,7 +82,7 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.methods.comparePassword = async function (password) {
-    const isMatch = await bcrypt.compare(password, this.password);
+    const isMatch = await bcrypt.compare(password, this.lc.password);
     return isMatch;
 };
 userSchema.virtual('fullName').get(function () {

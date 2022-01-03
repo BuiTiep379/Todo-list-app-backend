@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
-
+const { requireSignin } = require('../middlewares/user-middleware');
 const { ensureAuth, ensureGuest } = require('../middlewares/login-middleware');
 
 
 router.route('/dashboard').get(ensureAuth, async (req, res) => {
     try {
-        const user = await User.find({ user: req.user._id }).lean()
+        const user = await User.find({ _id: req.user._id }).lean()
         res.render('dashboard', {
-            name: req.user.firstName,
+            name: req.user.fb.firstName || req.user.gg.firstName || req.user.lc.firstName,
             user,
         })
     } catch (err) {

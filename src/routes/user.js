@@ -10,15 +10,22 @@ router.route('/signin').post(validateSignin, isRequestValidated, signin);
 router.route('/signup').post(validateSignup, isRequestValidated, signup);
 router.route('/signout').get(signout);
 
-router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/' }),
     function (req, res) {
         // Successful authentication, redirect success.
         res.redirect('/dashboard');
     });
+
+router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+router.get('/facebook/callback',
+    passport.authenticate('facebook', {
+        successRedirect: '/dashboard',
+        failureRedirect: '/'
+    })
+);
 router.get('/logout', function (req, res) {
     req.logout();
-    res.redirect('/login');
+    res.redirect('/');
 });
-
 module.exports = router;

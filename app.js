@@ -14,9 +14,10 @@ const app = express();
 const notFoundMiddleware = require('./src/middlewares/not-found');
 const errorHandlerMiddleware = require('./src/middlewares/error-handler');
 // passport middleware
-const { passportGoogle } = require('./src/middlewares/passport');
+const { passportGoogle, passportFacebook } = require('./src/middlewares/passport');
 
 passportGoogle(passport);
+passportFacebook(passport);
 // connect mongodb
 const connectDB = require('./src/db/connect');
 
@@ -43,7 +44,7 @@ app.set('views', path.join(__dirname, './src/views'));
 // Sessions
 app.use(
     session({
-        secret: 'keyboard cat',
+        secret: 'XUAN PHUONG',
         resave: false,
         saveUninitialized: false,
         store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL }),
@@ -52,6 +53,19 @@ app.use(
 /// passport middleware 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// set global var 
+app.use(function (req, res, next) {
+    res.locals.user = req.user || null;
+    next();
+});
+
+// flash message middleware
+app.use((req, res, next) => {
+    res.locals.message = req.session.message;
+    delete req.session.message;
+    next();
+})
 // // router
 
 // passportFacebook(passport);

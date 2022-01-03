@@ -22,11 +22,6 @@ const validateSignup = [
 ];
 
 const validateSignin = [
-    check('password')
-        .notEmpty()
-        .withMessage('Password must be provided')
-        .isLength({ min: 6 })
-        .withMessage('Password must be at least 6 characters'),
     check('email')
         .notEmpty()
         .withMessage('Email must be provided')
