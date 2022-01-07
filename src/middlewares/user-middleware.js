@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { UnauthenticatedError } = require('../errors');
 // save the token
 
 const createJWT = async (user) => {
@@ -17,7 +16,7 @@ const requireSignin = (req, res, next) => {
         req.user = user;
         // console.log(token);
     } else {
-        throw new UnauthenticatedError('Authorization required');
+        return res.status(400).json({ message: "Authorization required" })
     }
     next();
 };

@@ -6,13 +6,11 @@ const path = require('path');
 const MongoStore = require('connect-mongo');
 const session = require('express-session');
 const { engine } = require('express-handlebars');
-require('express-async-errors');
+const cors = require('cors');
+// require('express-async-errors');
 
 const app = express();
 
-// router middleware
-const notFoundMiddleware = require('./src/middlewares/not-found');
-const errorHandlerMiddleware = require('./src/middlewares/error-handler');
 // passport middleware
 const { passportGoogle, passportFacebook } = require('./src/middlewares/passport');
 
@@ -32,6 +30,7 @@ app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, './src/public')))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 /// express-handlebar engine 
 app.engine('.hbs', engine({
@@ -60,33 +59,19 @@ app.use(function (req, res, next) {
     next();
 });
 
-// flash message middleware
-app.use((req, res, next) => {
-    res.locals.message = req.session.message;
-    delete req.session.message;
-    next();
-})
 // // router
 
 // passportFacebook(passport);
 app.use('/auth', authRouter);
 app.use('/', require('./src/routes/index'));
-app.use(notFoundMiddleware);
-app.use(errorHandlerMiddleware);
 // port
 const PORT = process.env.PORT || 2000;
 
-const start = async () => {
-    try {
-        await connectDB(process.env.MONGODB_URL);
-        app.listen(PORT, () => {
-            console.log(`App run at http://localhost:${PORT}`);
-        })
-    } catch (error) {
-        console.log(error);
-    }
-};
-start();
+connectDB(process.env.MONGODB_URL);
+app.listen(PORT, () => {
+    console.log(`App run at http://localhost:${PORT}`);
+});
+
 
 
 

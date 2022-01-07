@@ -8,7 +8,7 @@ const passport = require('passport');
 
 router.route('/signin').post(validateSignin, isRequestValidated, signin);
 router.route('/signup').post(validateSignup, isRequestValidated, signup);
-router.route('/signout').get(signout);
+router.route('/signout').post(signout);
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/' }),

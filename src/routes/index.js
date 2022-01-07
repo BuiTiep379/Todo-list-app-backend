@@ -16,6 +16,11 @@ router.route('/dashboard').get(ensureAuth, async (req, res) => {
         console.error(err)
     }
 });
+router.route('/signup').get(ensureGuest, (req, res) => {
+    res.render('signup', {
+        layout: 'login',
+    })
+});
 router.route('/').get(ensureGuest, (req, res) => {
     res.render('login', {
         layout: 'login',

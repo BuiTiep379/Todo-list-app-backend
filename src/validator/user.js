@@ -1,6 +1,5 @@
 
 const { check, validationResult } = require('express-validator');
-const { BadRequestError } = require('../errors');
 const validateSignup = [
     check('firstName')
         .notEmpty()
@@ -32,10 +31,9 @@ const validateSignin = [
 const isRequestValidated = (req, res, next) => {
     const errors = validationResult(req);
     if (errors.array().length > 0) {
-        throw new BadRequestError(errors.array()[0].msg);
+        return res.status(400).json({ message: errors.array()[0].msg })
     }
     next();
-
 }
 module.exports = {
     validateSignup,
